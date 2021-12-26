@@ -1,6 +1,7 @@
 <?php
 
 /** @var \Laravel\Lumen\Routing\Router $router */
+use App\Models\PictureModel;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +15,8 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    $pictures = PictureModel::all();
+    return view('index', ['pictures' => $pictures]);
 });
 
 $router->get('/api/picture', 'PictureController@index');
