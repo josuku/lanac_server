@@ -1,3 +1,4 @@
 .vscode*
 build*
 LINKS.txt
+.DS_Store
