@@ -59,39 +59,42 @@ PictureProcessingOperation getProcessingOperation()
 // Main function
 int main(int argc, char *argv[])
 {
-   string ipAddress = getIpAddress();
+   string ipAddress = getIpAddress(), fileExtension, strFilePath;
+   bool fileProcessed = false;
 
    PictureProcessingOperation operation = getProcessingOperation();
    if (operation == PictureProcessingOperation::NO_OPERATION) return -1;
 
-   cout << "Select a folder which include pictures, please" << endl;
-
-   /*FilePicker filePicker;
-   string filePath = filePicker.selectFile();
-   if (filePath.length() <= 0) 
-   {
-      cout << "File couldn't be opened. Please, try again." << endl;
-      return -1;
-   }*/
+   cout << "[Client] Select a folder which include pictures, please" << endl;
 
    FilePicker filePicker;
    string folderPath = filePicker.selectFolder();
    if (folderPath.length() <= 0)
    {
-      cout << "Folder couldn't be opened. Please, try again." << endl;
+      cout << "[Client] Folder couldn't be opened. Please, try again." << endl;
       return -1;
    }
 
-   cout << "Selected Folder is " << folderPath << endl;
+   cout << "[Client] Selected Folder is " << folderPath << endl;
 
    for (const auto & entry : fs::directory_iterator(folderPath)) 
    {
-      Client client (ipAddress, PORT);
-      if (!client.connectToServer()) return -1;
-      cout << "Processing " << entry.path() << endl;
-      if (!client.sendFileHeader(entry.path(), operation)) return -1;
-      if (!client.sendFile(entry.path())) return -1;
-      client.disconnect();
+      strFilePath = string(entry.path());
+      cout << "[Client] Processing " << strFilePath << endl;
+      fileExtension = strFilePath.substr(strFilePath.find_last_of(".") + 1);
+
+      if (string(IMAGE_EXTENSIONS).find(fileExtension, 0) != string::npos) {
+         Client client (ipAddress, PORT);
+         if (!client.connectToServer()) return -1;
+         if (!client.sendFileHeader(strFilePath, fileExtension, operation)) return -1;
+         if (!client.sendFile(entry.path())) return -1;
+         client.disconnect();
+         fileProcessed = true;
+      }
+   }
+
+   if (!fileProcessed) {
+      cout << "[Client] Folder selected doesn't have image files" << endl;
    }
 
    return 0;

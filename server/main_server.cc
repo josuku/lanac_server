@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
       processPictureChange(fileHeader.operation, tempFilePath, processedPicture);
       
       // Save picture's to repository
-      string newPictureName = to_string(insertedId) + ".jpg";
+      string newPictureName = to_string(insertedId) + "." + fileHeader.extension;
       string processedFullPath = fileRepository->savePicture(processedPicture, fileRepository->getProcessedPath(), newPictureName);
       string originalFullPath = fileRepository->movePicture(tempFilePath, fileRepository->getOriginalsPath(), newPictureName);
 

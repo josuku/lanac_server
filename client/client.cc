@@ -41,13 +41,14 @@ bool Client::connectToServer()
    return true;
 }
 
-bool Client::sendFileHeader(string filePath, PictureProcessingOperation operation) 
+bool Client::sendFileHeader(string filePath, string fileExtension, PictureProcessingOperation operation) 
 {
    cout << "[Client] Sending file header of" << filePath << " to the Server... " << endl;
 
    FileHeader fileHeader;
    string fileName = filePath.substr(filePath.find_last_of("/") + 1);
    strcpy(fileHeader.name, fileName.c_str());
+   strcpy(fileHeader.extension, fileExtension.c_str());
    fileHeader.operation = operation;
 
    if (send(sockfd, &fileHeader, sizeof(FileHeader), 0) < 0)
