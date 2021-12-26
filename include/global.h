@@ -8,6 +8,10 @@ using namespace std;
 #define PORT 20000
 
 const string SAVE_FOLDER = "/Users/josuku/Downloads/";
+const string MYSQL_SERVER = "192.168.1.100";
+const string MYSQL_TABLE = "lanaccess";
+const string MYSQL_USER = "lanaccess";
+const string MYSQL_PASSWORD = "Lxnaccess1$";
 
 enum PictureProcessingOperation {
    NO_OPERATION = 0,

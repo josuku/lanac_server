@@ -1,11 +1,3 @@
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <iostream>
-#include <stdio.h>
-
 using namespace std;
 
 class Server {
@@ -13,9 +5,9 @@ class Server {
       Server(int port, int maxConnections);
       ~Server();
       bool createServer();
-      bool acceptConnection();
+      string acceptConnection();
       FileHeader receiveFileHeader();
-      string receiveFile(string fileName);
+      string receiveFile(string fileName, FileRepositoryInterface* fileRepository);
       void disconnect();
    private:
       int serverPort;

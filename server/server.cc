@@ -1,4 +1,13 @@
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <iostream>
+#include <stdio.h>
+#include <opencv2/core.hpp>
 #include "../include/global.h"
+#include "file_repository_interface.h"
 #include "server.h"
 
 Server::Server(int port, int connections)
@@ -55,7 +64,7 @@ bool Server::createServer()
    return true;
 }
 
-bool Server::acceptConnection() 
+string Server::acceptConnection() 
 {
    struct sockaddr_in addr_remote;
    int sin_size = sizeof(struct sockaddr_in);
@@ -63,10 +72,13 @@ bool Server::acceptConnection()
    if ((nsockfd = ::accept(sockfd, (struct sockaddr *)&addr_remote, (socklen_t *)&sin_size)) == -1) 
    {
       cout << "[Server] ERROR: Obtaining new Socket Despcritor, with errno:" << errno << endl;
-      return false;
+      return "";
    }
    cout << "[Server] Server has got connected from " << inet_ntoa(addr_remote.sin_addr) << endl;
-   return true;
+
+   char clientIpAddress[INET_ADDRSTRLEN];
+   inet_ntop( AF_INET, &(addr_remote.sin_addr), clientIpAddress, INET_ADDRSTRLEN);
+   return string(clientIpAddress);
 }
 
 FileHeader Server::receiveFileHeader() 
@@ -83,11 +95,11 @@ FileHeader Server::receiveFileHeader()
    return fileHeader;
 }
 
-string Server::receiveFile(string fileName) 
+string Server::receiveFile(string fileName, FileRepositoryInterface* fileRepository) 
 {
    char buffer[BUFFER_LENGTH];
    size_t receivedLength = 0, writtenLength = 0;
-   string savePath = string(SAVE_FOLDER) + fileName;
+   string savePath = fileRepository->getTempPath() + fileName;
 
    FILE* file = fopen(savePath.c_str(), "a");
    
