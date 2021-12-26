@@ -23,6 +23,6 @@ USE:
    - Client: Launch client without parameters. From build_v1 folder:
       $ ./client/client
 
-   - API: Must be installed in the same machine as Server, where files are stored.
-
    - MySql: sql\mysql_lanaccess.sql script must be executed on a MySql server. MySql configuration must be set on include\global.h
+
+   - Web_API: Must be installed in the same machine as Server, where files are stored. Web and API are made with Lumen-Laravel micro framework. web_api\.env file must be configured with correct values to access MySql database.

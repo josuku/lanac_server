@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
       // Save basic info into storage
       int insertedId = storage->save(fileHeader.name, fileHeader.operation, clientIpAddress);
 
-      // Proccess operation over the original picture
+      // Process operation over the original picture
       Mat processedPicture;
       processPictureChange(fileHeader.operation, tempFilePath, processedPicture);
       
