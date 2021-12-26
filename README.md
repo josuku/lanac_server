@@ -37,7 +37,8 @@ USE:
 
    - MySql: sql\mysql_lanaccess.sql script must be executed on a MySql server. MySql configuration must be set on include\global.h
 
-   - Web_API: Must be installed in the same machine as Server, where files are stored. Web and API are made with Lumen-Laravel micro framework. web_api\.env file must be configured with correct values to access MySql database.
+   - Web_API: Must be installed in the same machine as Server, where files are stored. Web and API are made with Lumen-Laravel micro framework. web_api\.env file must be configured with correct values to access MySql database. To test web_api you can execute nexthe following command from web_api folder:
+      $ php -S localhost:8000 -t public
 
 API ROUTES:
    - /api/picture : Get data from all pictures
