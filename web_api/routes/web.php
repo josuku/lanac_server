@@ -16,3 +16,8 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->get('/api/picture', 'PictureController@index');
+$router->get('/api/picture/{id}', 'PictureController@show');
+$router->get('/api/picture/original/{id}', 'PictureController@original');
+$router->get('/api/picture/processed/{id}', 'PictureController@processed');
