@@ -1,3 +1,12 @@
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <iostream>
+#include <stdio.h>
+#include <cstring>
+#include "../include/global.h"
 #include "client.h"
 
 Client::Client(string ipAddress, int port) 
@@ -9,11 +18,7 @@ Client::Client(string ipAddress, int port)
 
 Client::~Client() 
 {
-   if (sockfd > 0) 
-   {
-      close (sockfd);
-      cout << "[Client] Connection lost" << endl;
-   }
+   this->disconnect();
 }
 
 bool Client::connectToServer() 
@@ -47,8 +52,8 @@ bool Client::sendFileHeader(string filePath, string fileExtension, PictureProces
 
    FileHeader fileHeader;
    string fileName = filePath.substr(filePath.find_last_of("/") + 1);
-   strcpy(fileHeader.name, fileName.c_str());
-   strcpy(fileHeader.extension, fileExtension.c_str());
+   std::strcpy(fileHeader.name, fileName.c_str());
+   std::strcpy(fileHeader.extension, fileExtension.c_str());
    fileHeader.operation = operation;
 
    if (send(sockfd, &fileHeader, sizeof(FileHeader), 0) < 0)
@@ -91,5 +96,10 @@ bool Client::sendFile(string filePath)
         
 void Client::disconnect()
 {
-   Client::~Client();
+   if (sockfd > 0) 
+   {
+      close (sockfd);
+      sockfd = 0;
+      cout << "[Client] Connection lost" << endl;
+   }
 }

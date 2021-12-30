@@ -1,16 +1,19 @@
-#include "file_picker.h"
+#include <iostream>
+#include <nfd.h>
+#include "file_picker_interface.h"
+#include "file_picker_gui.h"
 
 using namespace std;
 
-FilePicker::FilePicker() { 
+FilePickerGui::FilePickerGui() { 
    NFD_Init();
 }
 
-FilePicker::~FilePicker() {
+FilePickerGui::~FilePickerGui() {
    NFD_Quit();
 }
 
-std::string FilePicker::selectFile() 
+std::string FilePickerGui::selectFile() 
 {
    string strPath;
    nfdchar_t *outPath;
@@ -23,7 +26,7 @@ std::string FilePicker::selectFile()
    return "";
 }
 
-string FilePicker::selectFolder() 
+string FilePickerGui::selectFolder() 
 {
    string strPath;
    nfdchar_t *outPath;
@@ -35,7 +38,7 @@ string FilePicker::selectFolder()
    return "";
 }
 
-bool FilePicker::processResult(nfdresult_t& result, nfdchar_t** outPath, string& strPath)
+bool FilePickerGui::processResult(nfdresult_t& result, nfdchar_t** outPath, string& strPath)
 {
    if (result == NFD_OKAY)
    {

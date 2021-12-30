@@ -1,5 +1,17 @@
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <iostream>
+#include <stdio.h>
+#include <cstring>
 #include <filesystem>
-#include "file_picker.h"
+#include <nfd.h>
+#include "../include/global.h"
+#include "file_picker_interface.h"
+#include "file_picker_gui.h"
+#include "file_picker_cmd.h"
 #include "client.h"
 
 using namespace std;
@@ -67,11 +79,21 @@ int main(int argc, char *argv[])
 
    cout << "[Client] Select a folder which include pictures, please" << endl;
 
-   FilePicker filePicker;
-   string folderPath = filePicker.selectFolder();
-   if (folderPath.length() <= 0)
+   FilePickerInterface * filePicker = NULL;
+
+   if (argc > 1 && std::strcmp(argv[1], NO_GUI_CLIENT_PARAMETER.c_str()) == 0)
    {
-      cout << "[Client] Folder couldn't be opened. Please, try again." << endl;
+      filePicker = new FilePickerCmd();
+   }
+   else 
+   {
+      filePicker = new FilePickerGui();
+   }
+
+   string folderPath = filePicker->selectFolder();
+   if (folderPath.length() <= 0 || !fs::exists(folderPath))
+   {
+      cout << "[Client] Folder couldn't be opened or doesn't exist. Please, try again." << endl;
       return -1;
    }
 

@@ -1,13 +1,10 @@
-#include <iostream>
-#include <nfd.h>
-
 using namespace std;
 
-class FilePicker
+class FilePickerGui : public FilePickerInterface
 {
     public:
-        FilePicker();
-        ~FilePicker();
+        FilePickerGui();
+        ~FilePickerGui();
         string selectFile();
         string selectFolder();
     private:

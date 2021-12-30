@@ -19,16 +19,7 @@ Server::Server(int port, int connections)
 
 Server::~Server() 
 {
-   if (sockfd > 0) 
-   {
-      close (sockfd);
-      cout << "[Server] Connection lost on " << sockfd << endl;
-   }
-   if (nsockfd > 0) 
-   {
-      close (nsockfd);
-      cout << "[Server] Connection lost on " << nsockfd << endl;
-   }
+   this->disconnect();
 }
 
 bool Server::createServer() 
@@ -145,5 +136,16 @@ string Server::receiveFile(string fileName, FileRepositoryInterface* fileReposit
         
 void Server::disconnect()
 {
-   Server::~Server();
+   if (sockfd > 0) 
+   {
+      close (sockfd);
+      sockfd = 0;
+      cout << "[Server] Connection lost on " << sockfd << endl;
+   }
+   if (nsockfd > 0) 
+   {
+      close (nsockfd);
+      nsockfd = 0;
+      cout << "[Server] Connection lost on " << nsockfd << endl;
+   }
 }

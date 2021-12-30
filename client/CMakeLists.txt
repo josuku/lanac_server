@@ -1,9 +1,9 @@
-cmake_minimum_required (VERSION 3.22.1)
+cmake_minimum_required (VERSION 3.1)
 set (CMAKE_CXX_STANDARD 17)
 project (client)
 
 add_subdirectory(./libraries/nativefiledialog-extended)
 
-add_executable (client main_client.cc client.cc file_picker.cc)
+add_executable (client main_client.cc client.cc file_picker_gui.cc file_picker_cmd.cc)
 
 target_link_libraries(client PRIVATE nfd)
