@@ -83,7 +83,8 @@ int main(int argc, char *argv[])
 
    if (argc > 1 && std::strcmp(argv[1], NO_GUI_CLIENT_PARAMETER.c_str()) == 0)
    {
-      filePicker = new FilePickerCmd();
+      string srcPath = (argc > 2 && std::strlen(argv[2]) > 0 ? argv[2] : SRC_FOLDER);
+      filePicker = new FilePickerCmd(srcPath);
    }
    else 
    {

@@ -1,0 +1,28 @@
+# Get the base Ubuntu image from Docker Hub
+FROM ubuntu:latest as client
+
+# Update apps on the base image
+RUN apt-get -y update && apt-get install -y
+
+# Install the Cmake and G++ compiler
+RUN apt-get -y install cmake gcc 
+RUN apt-get -y install build-essential
+RUN apt-get -y install pkg-config libgtk-3-dev
+
+# Copy the current folder which contains C++ source code to the Docker image under /usr/src
+COPY ./include /usr/src/include/
+COPY ./client /usr/src/client/
+
+# Generate a build
+RUN set -ex;              \
+    cd /usr/src/client;   \
+    mkdir build;          \
+    cd build;             \
+    cmake ..;             \
+    cmake --build .
+
+# Specify the working directory
+WORKDIR /usr/src/client/build/
+
+# Run the client without gui and sending the src folder
+CMD ["./client", "-nogui", "/usr/src"]
