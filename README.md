@@ -35,8 +35,8 @@ USE:
    - GUI Client: Launch client without parameters for GUI version of FilePicker. From build_v1 folder:
       $ ./client/client
 
-   - Command Client: Launch client with parameter -nogui (configurable in global.h in NO_GUI_CLIENT_PARAMETER) version of FilePicker. From build_v1 folder:
-      $ ./client/client -nogui
+   - Command Client: Launch client with parameter -nogui (configurable in global.h in NO_GUI_CLIENT_PARAMETER) version of FilePicker. The optional second parameter indicates the srcFolder. If it would not be added, SRC_FOLDER from global.h would be used. From build_v1 folder:
+      $ ./client/client -nogui "/usr/src"
 
    - MySql: sql\mysql_lanaccess.sql script must be executed on a MySql server. MySql configuration must be set on include\global.h
 
