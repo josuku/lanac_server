@@ -35,8 +35,8 @@ USE:
    - GUI Client: Launch client without parameters for GUI version of FilePicker. From build_v1 folder:
       $ ./client/client
 
-   - Command Client: Launch client with parameter -nogui (configurable in global.h in NO_GUI_CLIENT_PARAMETER) version of FilePicker. The optional second parameter indicates the srcFolder. If it would not be added, SRC_FOLDER from global.h would be used. From build_v1 folder:
-      $ ./client/client -nogui "/usr/src"
+   - Command Client: Launch client with parameter -nogui (configurable in global.h in NO_GUI_CLIENT_PARAMETER) version of FilePicker. Optional parameters if non-Gui mode is used are hostname/ip, image processing operation (int value from PictureProcessingOperation) and full path to pictures folder, in that order. From build_v1 folder:
+      $ ./client/client -nogui server 1 /usr/src/client/images/folder1
 
    - MySql: sql\mysql_lanaccess.sql script must be executed on a MySql server. MySql configuration must be set on include\global.h
 
@@ -51,3 +51,9 @@ API ROUTES:
    - /api/picture/original/{id} : Get original picture from file with id {id}
 
    - /api/picture/processed/{id} : Get processed picture from file with id {id}
+
+DOCKER:
+
+   - Added Dockerfile.client and Dockerfile.server to build images.
+
+   - Added docker-compose to compose up the whole environment
