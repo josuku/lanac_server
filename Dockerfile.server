@@ -1,0 +1,51 @@
+FROM ubuntu:18.04 as serverbuilder
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y update && apt-get install -y cmake gcc g++ wget vim git unzip build-essential \
+ pkg-config libssl-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libavcodec-dev libavformat-dev libswscale-dev libgtk-3-dev
+
+# Build and install Mysql Connector for C++
+RUN git clone --depth 1 --branch 8.0 https://github.com/mysql/mysql-connector-cpp.git \
+ && cd mysql-connector-cpp ; mkdir build; cd build \
+ && cmake .. -DCMAKE_BUILD_TYPE=Release \
+ && cmake --build . \
+ && make install 
+
+# Build and install OpenCV 4 last version
+RUN wget -O opencv.tar.gz https://github.com/opencv/opencv/archive/4.x.tar.gz \
+ && tar zxf opencv.tar.gz \
+ && mkdir -p build_opencv_4x && cd build_opencv_4x \
+ && cmake ../opencv-4.x -DBUILD_opencv_gapi:BOOL=OFF \
+ && make -j4 \
+ && make install
+
+FROM serverbuilder as server
+
+# integrate on top when working
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y php
+
+RUN apache2ctl restart; rm -r /var/www/html/*;
+
+# Copy the current folder which contains C++ source code to the Docker image under /usr/src
+COPY ./include /usr/src/include/
+COPY ./server /usr/src/server/
+COPY ./web_api /var/www/html/
+
+# Generate a build
+RUN set -ex;               \
+    cd /usr/src/server;    \
+    mkdir build; cd build; \
+    cmake ..;              \
+    cmake --build .
+
+WORKDIR /usr/src/server/build/
+
+FROM server as finalserver
+
+EXPOSE 80
+EXPOSE 8000
+EXPOSE 20000
+
+ENV SAVE_FOLDER=/usr/src/files
+
+# Run the server
+CMD ["./server"]

@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+  mysql_db:
+    image: mysql:5.7
+    container_name: mysql_db
+    command: --plugin-load=mysqlx=mysqlx.so --mysqlx-bind-address=0.0.0.0
+    environment:
+      MYSQL_ROOT_PASSWORD: lanaccess
+      MYSQL_DATABASE: lanaccess
+      MYSQL_USER: lanaccess
+      MYSQL_PASSWORD: Lxnaccess1$$
+    ports:
+      - "3306:3306"
+      - "33060:33060"
+    volumes:
+      - "./sql/mysql_lanaccess.sql:/docker-entrypoint-initdb.d/1.sql"
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      interval: 5s
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    links:
+      - mysql_db
+    environment:
+      PMA_HOST: mysql_db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8081:80
+
+  server:
+    image: server
+    container_name: server
+    links:
+      - mysql_db
+    environment:
+      MYSQL_SERVER: mysql_db
+      MYSQL_DATABASE: lanaccess
+      MYSQL_USER: lanaccess
+      MYSQL_PASSWORD: Lxnaccess1$$
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+  client1:
+    image: client
+    container_name: client1
+    stdin_open: true
+    tty: true
+    links:
+      - server
+    command: [ "./client", "-nogui", "server", "1", "/usr/src/client/images/folder1" ]
+
+  client2:
+    image: client
+    container_name: client2
+    stdin_open: true
+    tty: true
+    links:
+      - server
+    command: [ "./client", "-nogui", "server", "2", "/usr/src/client/images/folder2" ]
+
+  client3:
+    image: client
+    container_name: client3
+    stdin_open: true
+    tty: true
+    links:
+      - server
+    command: [ "./client", "-nogui", "server", "1", "/usr/src/client/images/folder3" ]
