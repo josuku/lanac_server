@@ -11,23 +11,33 @@
 using namespace std;
 using namespace cv;
 
+LocalFileRepository::LocalFileRepository(string path)
+{
+   this->filePath = path;
+}
+
+LocalFileRepository::~LocalFileRepository() 
+{
+
+}
+
 string LocalFileRepository::getTempPath()
 {
-   string path = SAVE_FOLDER + "temp/";
+   string path = filePath + "temp/";
    cv::utils::fs::createDirectory(path);
    return path;
 }
 
 string LocalFileRepository::getOriginalsPath()
 {
-   string path = SAVE_FOLDER + "original/";
+   string path = filePath + "original/";
    cv::utils::fs::createDirectory(path);
    return path;
 }
 
 string LocalFileRepository::getProcessedPath()
 {
-   string path = SAVE_FOLDER + "processed/";
+   string path = filePath + "processed/";
    cv::utils::fs::createDirectory(path);
    return path;
 }

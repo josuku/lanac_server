@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <netdb.h>
 #include <iostream>
 #include <stdio.h>
 #include <cstring>
@@ -13,36 +14,22 @@
 #include "file_picker_gui.h"
 #include "file_picker_cmd.h"
 #include "client.h"
+#include "network_utils.h"
 
 using namespace std;
 namespace fs = std::filesystem;
 
-bool validateIpAddress(const string &ipAddress)
-{
-    struct sockaddr_in sa;
-    int result = inet_pton(AF_INET, ipAddress.c_str(), &(sa.sin_addr));
-    return result != 0;
-}
-
 string getIpAddress() 
 {
-   string ipAddress;
+   string inputData, ipAddress;
    bool isValid = false;
    do 
    {
-      cout << "Introduce a valid IP address: ";
-      cin >> ipAddress;
-
-      if (!validateIpAddress(ipAddress)) 
-      {
-         cout << "Invalid IP address, try again" << endl;
-      }
-      else 
-      {
-         isValid = true;
-      }
+      cout << "Insert a valid IP address or hostname: ";
+      cin >> inputData;
+      ipAddress = NetworkUtils::getValidIpAddress(inputData);
    }
-   while (!isValid);
+   while (ipAddress.length() > 0);
    return ipAddress;
 }
 
@@ -68,22 +55,14 @@ PictureProcessingOperation getProcessingOperation()
    return (PictureProcessingOperation)selectedOption;
 }
 
-// Main function
-int main(int argc, char *argv[])
+string getPicturesFolder(bool guiMode)
 {
-   string ipAddress = getIpAddress(), fileExtension, strFilePath;
-   bool fileProcessed = false;
-
-   PictureProcessingOperation operation = getProcessingOperation();
-   if (operation == PictureProcessingOperation::NO_OPERATION) return -1;
-
    cout << "[Client] Select a folder which include pictures, please" << endl;
 
    FilePickerInterface * filePicker = NULL;
-
-   if (argc > 1 && std::strcmp(argv[1], NO_GUI_CLIENT_PARAMETER.c_str()) == 0)
+   if (!guiMode)
    {
-      string srcPath = (argc > 2 && std::strlen(argv[2]) > 0 ? argv[2] : SRC_FOLDER);
+      string srcPath = (getenv("SRC_FOLDER") != NULL && std::strlen(getenv("SRC_FOLDER")) > 0 ? getenv("SRC_FOLDER") : SRC_FOLDER);
       filePicker = new FilePickerCmd(srcPath);
    }
    else 
@@ -95,12 +74,36 @@ int main(int argc, char *argv[])
    if (folderPath.length() <= 0 || !fs::exists(folderPath))
    {
       cout << "[Client] Folder couldn't be opened or doesn't exist. Please, try again." << endl;
-      return -1;
+      return "";
    }
 
    cout << "[Client] Selected Folder is " << folderPath << endl;
 
-   for (const auto & entry : fs::directory_iterator(folderPath)) 
+   return folderPath;
+}
+
+// Main function. 
+//  Parameters: 
+//    -1. -nogui (optional): customizable value in NO_GUI_CLIENT_PARAMETER. activate command mode
+//    -2. <hostname/ip> (optional): if -nogui is set, you can specify server hostname or ip address
+//    -3. <processing_option> (optional): if -nogui is set, you can specify processing option to do with pictures (int value from PictureProcessingOperation)
+//    -4. <pictures_folder> (optional): if -nogui is set, you can specify the folder of the pictures that will be processed
+//  Environment Values:
+//    - SRC_FOLDER (optional): folder where source code is placed. If no value is provided it will use include\global.h value
+int main(int argc, char *argv[])
+{
+   string ipAddress, fileExtension, strFilePath, picturesFolderPath;
+   bool fileProcessed = false;
+   PictureProcessingOperation operation = PictureProcessingOperation::NO_OPERATION;
+
+   bool nogui = (argc > 1 && std::strcmp(argv[1], NO_GUI_CLIENT_PARAMETER.c_str()) == 0);
+   ipAddress = (argc > 2 && nogui ? NetworkUtils::getValidIpAddress(argv[2]) : getIpAddress());
+   operation = (argc > 3 && nogui ? (PictureProcessingOperation)atoi(argv[3]) : getProcessingOperation());
+   if (operation == PictureProcessingOperation::NO_OPERATION) return -1;
+   picturesFolderPath = (argc > 4 && nogui && fs::exists(argv[4]) ? argv[4] : getPicturesFolder(!nogui));
+   if (picturesFolderPath.length() == 0) return -1;
+
+   for (const auto & entry : fs::directory_iterator(picturesFolderPath)) 
    {
       strFilePath = string(entry.path());
       cout << "[Client] Processing " << strFilePath << endl;

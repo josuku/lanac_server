@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <stdio.h>
+#include <cstdlib>
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
@@ -44,11 +45,19 @@ bool processPictureChange(PictureProcessingInterface::Operation operation, strin
    return true;
 }
 
-// Main function
+// Main function. 
+//  Parameters: 
+//
+//  Environment Values:
+//    - SAVE_FOLDER (optional): folder where pictures would be stored. If no value is provided it will use include\global.h value
+//    - MYSQL_SERVER (optional): IP or hostname of MySQL server. If no value is provided it will use include\global.h value
+//    - MYSQL_USER (optional): User of MySQL server. If no value is provided it will use include\global.h value
+//    - MYSQL_PASSWORD (optional): Password for the user of MySQL server. If no value is provided it will use include\global.h value
 int main(int argc, char *argv[])
 {
+   string localFileRepoPath = (getenv("SAVE_FOLDER") != NULL && std::strlen(getenv("SAVE_FOLDER")) > 0 ? getenv("SAVE_FOLDER") : SAVE_FOLDER);
+   FileRepositoryInterface* fileRepository = new LocalFileRepository(localFileRepoPath);
    DatabaseInterface* storage = new MySQLDatabase();
-   FileRepositoryInterface* fileRepository = new LocalFileRepository();
 
    Server server(PORT, MAX_CONNECTIONS);
    if (!server.createServer()) return -1;
