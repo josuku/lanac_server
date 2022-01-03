@@ -1,0 +1,7 @@
+FROM alpine as shared_files
+
+# declare a volume at location /var/shared_volume
+VOLUME /usr/src/files
+
+# configure an entrypoint that does not terminate, to keep the container up
+ENTRYPOINT [ "tail", "-f", "/dev/null" ]

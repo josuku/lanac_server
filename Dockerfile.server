@@ -45,7 +45,7 @@ EXPOSE 80
 EXPOSE 8000
 EXPOSE 20000
 
-ENV SAVE_FOLDER=/usr/src/files
+ENV SAVE_FOLDER=/usr/src/files/
 
 # Run the server
 CMD ["./server"]

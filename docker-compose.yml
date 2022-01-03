@@ -1,6 +1,17 @@
-version: '3'
+version: '3.7'
+
+volumes:
+  shared_files:
 
 services:
+  data:
+    build:
+      context: ./
+      dockerfile: Dockerfile.files
+    container_name: files
+    volumes:
+      - "shared_files:/usr/src/files"
+
   mysql_db:
     image: mysql:5.7
     container_name: mysql_db
@@ -33,7 +44,9 @@ services:
       - 8081:80
 
   server:
-    image: server
+    build:
+      context: '.'
+      dockerfile: Dockerfile.server
     container_name: server
     links:
       - mysql_db
@@ -45,9 +58,13 @@ services:
     depends_on:
       mysql_db:
         condition: service_healthy
+    volumes:
+      - "shared_files:/usr/src/files"
 
   client1:
-    image: client
+    build:
+      context: '.'
+      dockerfile: Dockerfile.client
     container_name: client1
     stdin_open: true
     tty: true
@@ -56,7 +73,9 @@ services:
     command: [ "./client", "-nogui", "server", "1", "/usr/src/client/images/folder1" ]
 
   client2:
-    image: client
+    build:
+      context: '.'
+      dockerfile: Dockerfile.client
     container_name: client2
     stdin_open: true
     tty: true
@@ -65,10 +84,30 @@ services:
     command: [ "./client", "-nogui", "server", "2", "/usr/src/client/images/folder2" ]
 
   client3:
-    image: client
+    build:
+      context: '.'
+      dockerfile: Dockerfile.client
     container_name: client3
     stdin_open: true
     tty: true
     links:
       - server
     command: [ "./client", "-nogui", "server", "1", "/usr/src/client/images/folder3" ]
+
+  webapi:
+    build:
+      context: '.'
+      dockerfile: Dockerfile.webapi
+      args:
+        uid: ${UID}
+    container_name: webapi
+    environment:
+      - APACHE_RUN_USER=#${UID}
+      - APACHE_RUN_GROUP=#${UID}
+    volumes:
+      - ./web_api:/var/www/html
+      - "shared_files:/usr/src/files"
+    ports:
+      - 8000:80
+    links:
+      - mysql_db
