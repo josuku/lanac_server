@@ -57,3 +57,9 @@ DOCKER:
    - Added Dockerfile.client and Dockerfile.server to build images.
 
    - Added docker-compose to compose up the whole environment
+
+   - Phpmyadmin is available in http://localhost:8081
+
+   - Web view is available in http://localhost:8000
+
+   - Command Test of the client with 3 clients
