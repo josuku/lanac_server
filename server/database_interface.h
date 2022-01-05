@@ -5,5 +5,6 @@ class DatabaseInterface {
       virtual void init() = 0;
       virtual int save(string fileName, PictureProcessingInterface::Operation operation, string ipAddress) = 0;
       virtual bool updatePaths(int id, string originalPath, string processedPath) = 0;
+      virtual bool updateError(int id, string error) = 0;
       virtual ~DatabaseInterface() = default;
 };

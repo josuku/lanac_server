@@ -79,12 +79,14 @@ int main(int argc, char *argv[])
       processPictureChange(fileHeader.operation, tempFilePath, processedPicture);
       
       // Save picture's to repository
+      string error = "";
       string newPictureName = to_string(insertedId) + "." + fileHeader.extension;
-      string processedFullPath = fileRepository->savePicture(processedPicture, fileRepository->getProcessedPath(), newPictureName);
+      string processedFullPath = fileRepository->savePicture(processedPicture, fileRepository->getProcessedPath(), newPictureName, error);
       string originalFullPath = fileRepository->movePicture(tempFilePath, fileRepository->getOriginalsPath(), newPictureName);
 
       // Update info into storage
       storage->updatePaths(insertedId, originalFullPath, processedFullPath);
+      if (error.length() > 0) storage->updateError(insertedId, error);
    }
 
    delete(storage);

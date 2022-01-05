@@ -42,17 +42,36 @@ string LocalFileRepository::getProcessedPath()
    return path;
 }
 
-string LocalFileRepository::savePicture(Mat picture, string fullpath)
+string LocalFileRepository::savePicture(Mat picture, string fullpath, string &error)
 {
-   imwrite(fullpath, picture);
-   return fullpath;
+   try 
+   {
+      imwrite(fullpath, picture);
+      return fullpath;
+   }
+   catch (exception& e)
+   {
+      error = e.what();
+      cout << "[Server] ERROR: Error saving picture in " << fullpath << ": " << error << endl;
+      return "";
+   }
 }
 
-string LocalFileRepository::savePicture(Mat picture, string path, string filename) 
+string LocalFileRepository::savePicture(Mat picture, string path, string filename, string &error) 
 {
-   string fullPath = path + filename;
-   imwrite(fullPath, picture);
-   return fullPath;
+   string fullPath;
+   try 
+   {
+      fullPath = path + filename;
+      imwrite(fullPath, picture);
+      return fullPath;
+   }
+   catch (exception& e)
+   {
+      error = e.what();
+      cout << "[Server] ERROR: Error saving picture in " << fullPath << ": " << error << endl;
+      return "";
+   }
 }
 
 string LocalFileRepository::movePicture(string originalFullPath, string newPath, string filename)

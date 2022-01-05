@@ -20,7 +20,8 @@ CREATE TABLE `pictures` (
   `original_path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
   `processed_path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
-  `ip_address` varchar(30) DEFAULT NULL
+  `ip_address` varchar(30) DEFAULT NULL,
+  `error` varchar(500) NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- Índices para tablas volcadas

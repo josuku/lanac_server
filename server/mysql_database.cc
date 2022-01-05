@@ -85,3 +85,19 @@ bool MySQLDatabase::updatePaths(int id, string originalPath, string processedPat
    cout << "[Server] Updated paths of id " << id << endl;
    return true;
 }
+
+bool MySQLDatabase::updateError(int id, string error)
+{
+   try 
+   {
+      mysqlx::Result result = picturesTable->update().set("error", error)
+         .where("id = " + to_string(id)).execute();
+   } 
+   catch (exception& e)
+   {
+      cout << "[Server] ERROR: Can't update error into mysql server: " << e.what() << endl;
+      exit(-1);
+   }
+   cout << "[Server] Updated error of id " << id << endl;
+   return true;
+}

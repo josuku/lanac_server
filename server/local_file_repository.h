@@ -10,8 +10,8 @@ class LocalFileRepository : public FileRepositoryInterface {
       string getOriginalsPath();
       string getProcessedPath();
 
-      string savePicture(Mat picture, string fullpath);
-      string savePicture(Mat picture, string path, string filename);
+      string savePicture(Mat picture, string fullpath, string &error);
+      string savePicture(Mat picture, string path, string filename, string &error);
       string movePicture(string originalFullPath, string newPath, string filename);
 
    private:
