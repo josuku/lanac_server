@@ -28,8 +28,9 @@ string getIpAddress()
       cout << "Insert a valid IP address or hostname: ";
       cin >> inputData;
       ipAddress = NetworkUtils::getValidIpAddress(inputData);
+      cout << endl;
    }
-   while (ipAddress.length() > 0);
+   while (ipAddress.length() == 0);
    return ipAddress;
 }
 
