@@ -1,4 +1,4 @@
-LANACCESS DEMO
+LANAC SERVER
 
 C++ client to select a folder with pictures, choose an operation to do on the pictures and send data and files to the server.
 
